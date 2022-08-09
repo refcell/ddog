@@ -12,8 +12,8 @@ pub mod routes;
 /// Prelude to re-export common types
 pub mod prelude {
     pub use super::{
-        version::{self, *},
         base::{self, *},
-        routes::{self, *, tr::*}
+        routes::{self, tr::*, *},
+        version::{self, *},
     };
 }

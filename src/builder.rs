@@ -1,7 +1,6 @@
-
 //! Internal query builder
 
-use crate::{types::prelude::*, prelude::routes::tr::Route};
+use crate::{prelude::routes::tr::Route, types::prelude::*};
 
 /// Builder for creating datadog API requests
 ///
@@ -17,8 +16,8 @@ use crate::{types::prelude::*, prelude::routes::tr::Route};
 ///     match builder.v2()
 ///        .metrics()
 ///        .headers(vec![
-///            ("Accept".to_string(), "application/json".to_string()),
-///            ("Content-Type".to_string(), "application/json".to_string()),
+///            ("Accept", "application/json"),
+///            ("Content-Type", "application/json"),
 ///        ])
 ///        .execute().await {
 ///            Ok(_) => {
@@ -36,7 +35,7 @@ pub struct Builder {
     /// API Version
     pub version: ApiVersion,
     /// Request headers
-    pub headers: Vec<(String, String)>
+    pub headers: Vec<(String, String)>,
 }
 
 impl Builder {

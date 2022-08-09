@@ -21,13 +21,13 @@ pub trait Route {
     fn with_header(self, key: &str, value: &str) -> Self;
 
     /// Add a list of headers to the request
-    fn headers(self, headers: Vec<(String, String)>) -> Self;
+    fn headers(self, headers: Vec<(&str, &str)>) -> Self;
 
     /// Adds an api key to the request
-    fn with_api_key(self, key: String) -> Self;
+    fn with_api_key(self, key: &str) -> Self;
 
     /// Adds an application key to the request
-    fn with_application_key(self, key: String) -> Self;
+    fn with_application_key(self, key: &str) -> Self;
 
     /// Executes the api request
     async fn execute(self) -> Result<Self::ExecutionResult, reqwest::StatusCode>;

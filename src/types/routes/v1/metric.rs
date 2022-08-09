@@ -1,4 +1,3 @@
-
 /// Metric Endpoint
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Metric {
@@ -9,8 +8,12 @@ pub struct Metric {
 impl Metric {
     /// Initializes the metric endpoint
     pub fn new() -> Self {
-        Self {
-            name: String::new(),
-        }
+        Self::default()
+    }
+}
+
+impl Default for Metric {
+    fn default() -> Self {
+        Self::new()
     }
 }

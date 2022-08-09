@@ -1,9 +1,9 @@
 use std::str::FromStr;
 
 use async_trait::async_trait;
-use serde::{Deserialize, Serialize};
-use chrono::{DateTime, Utc};
 use chrono::serde::ts_seconds_option;
+use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
 
 use crate::{prelude::routes::tr::Route, types};
 
@@ -29,7 +29,7 @@ pub struct MetricResponse {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct MetricResponseData {
     /// The metric type
-    #[serde(rename="type")]
+    #[serde(rename = "type")]
     pub type_: MetricTag,
     /// The metric id
     pub id: String,
@@ -47,7 +47,7 @@ pub struct MetricResponseAttributes {
     /// The included percentiles
     pub included_percentiles: bool,
     /// The Metric's Type
-    #[serde(rename="type")]
+    #[serde(rename = "type")]
     pub type_: MetricType,
     /// The time it was previously modified
     #[serde(with = "ts_seconds_option")]
@@ -71,61 +71,61 @@ pub struct Aggregation {
 #[derive(Debug, Deserialize, Serialize)]
 pub enum SpaceEnum {
     /// Average Metric
-    #[serde(rename="avg")]
+    #[serde(rename = "avg")]
     Avg,
     /// Maximum Metric
-    #[serde(rename="max")]
+    #[serde(rename = "max")]
     Max,
     /// Minimum Metric
-    #[serde(rename="min")]
+    #[serde(rename = "min")]
     Min,
     /// Sum Metric
-    #[serde(rename="sum")]
-    Sum
+    #[serde(rename = "sum")]
+    Sum,
 }
 
 /// A Time Enum
 #[derive(Debug, Deserialize, Serialize)]
 pub enum TimeEnum {
     /// Average Metric
-    #[serde(rename="avg")]
+    #[serde(rename = "avg")]
     Avg,
     /// Count Metric
-    #[serde(rename="count")]
+    #[serde(rename = "count")]
     Count,
     /// Maximum Metric
-    #[serde(rename="max")]
+    #[serde(rename = "max")]
     Max,
     /// Minimum Metric
-    #[serde(rename="min")]
+    #[serde(rename = "min")]
     Min,
     /// Sum Metric
-    #[serde(rename="sum")]
-    Sum
+    #[serde(rename = "sum")]
+    Sum,
 }
 
 /// The Metric Types
 #[derive(Debug, Deserialize, Serialize)]
 pub enum MetricType {
     /// A guage metric
-    #[serde(rename="gauge")]
+    #[serde(rename = "gauge")]
     Gauge,
     /// A counter metric
-    #[serde(rename="count")]
+    #[serde(rename = "count")]
     Count,
     /// A rate metric
-    #[serde(rename="rate")]
+    #[serde(rename = "rate")]
     Rate,
     /// A distribution metric
-    #[serde(rename="distribution")]
-    Distribution
+    #[serde(rename = "distribution")]
+    Distribution,
 }
 
 /// A Metric Tag
 #[derive(Debug, Deserialize, Serialize)]
 pub enum MetricTag {
     /// Manage Tags Response
-    #[serde(rename="manage_tags")]
+    #[serde(rename = "manage_tags")]
     ManageTags,
 }
 
@@ -158,7 +158,10 @@ impl Route for Metric {
 
     /// The route path
     fn path(&self) -> String {
-        format!("/v2/metrics/{}", self.route.as_ref().unwrap_or(&"".to_string()))
+        format!(
+            "/v2/metrics/{}",
+            self.route.as_ref().unwrap_or(&"".to_string())
+        )
     }
 
     /// Sub Routes
@@ -169,27 +172,39 @@ impl Route for Metric {
 
     /// Add a header to the request
     fn with_header(mut self, key: &str, value: &str) -> Self {
-        self.headers.insert(reqwest::header::HeaderName::from_str(&key).unwrap(), reqwest::header::HeaderValue::from_str(&value).unwrap());
+        self.headers.insert(
+            reqwest::header::HeaderName::from_str(key).unwrap(),
+            reqwest::header::HeaderValue::from_str(value).unwrap(),
+        );
         self
     }
 
     /// Add a list of headers to the request
-    fn headers(mut self, headers: Vec<(String, String)>) -> Self {
+    fn headers(mut self, headers: Vec<(&str, &str)>) -> Self {
         for (key, value) in headers {
-            self.headers.insert(reqwest::header::HeaderName::from_str(&key).unwrap(), reqwest::header::HeaderValue::from_str(&value).unwrap());
+            self.headers.insert(
+                reqwest::header::HeaderName::from_str(key).unwrap(),
+                reqwest::header::HeaderValue::from_str(value).unwrap(),
+            );
         }
         self
     }
 
     /// Adds an api key to the request
-    fn with_api_key(mut self, key: String) -> Self {
-        self.headers.insert(reqwest::header::HeaderName::from_str("DD-API-KEY").unwrap(), reqwest::header::HeaderValue::from_str(&key).unwrap());
+    fn with_api_key(mut self, key: &str) -> Self {
+        self.headers.insert(
+            reqwest::header::HeaderName::from_str("DD-API-KEY").unwrap(),
+            reqwest::header::HeaderValue::from_str(key).unwrap(),
+        );
         self
     }
 
     /// Adds an application key to the request
-    fn with_application_key(mut self, key: String) -> Self {
-        self.headers.insert(reqwest::header::HeaderName::from_str("DD-APPLICATION-KEY").unwrap(), reqwest::header::HeaderValue::from_str(&key).unwrap());
+    fn with_application_key(mut self, key: &str) -> Self {
+        self.headers.insert(
+            reqwest::header::HeaderName::from_str("DD-APPLICATION-KEY").unwrap(),
+            reqwest::header::HeaderValue::from_str(key).unwrap(),
+        );
         self
     }
 
@@ -242,4 +257,3 @@ impl Route for Metric {
         }
     }
 }
-

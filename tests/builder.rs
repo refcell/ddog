@@ -1,6 +1,5 @@
 use ddog::prelude::*;
 
-
 /*
 
 # Path parameters
@@ -29,24 +28,26 @@ EOF
 
  */
 
-
 #[test]
 fn post_metrics_explicitly() {
     let mut builder = builder::Builder::new();
     tokio_test::block_on(async {
-        match builder.v2()
+        match builder
+            .v2()
             .metrics()
             .headers(vec![
-                ("Accept".to_string(), "application/json".to_string()),
-                ("Content-Type".to_string(), "application/json".to_string()),
+                ("Accept", "application/json"),
+                ("Content-Type", "application/json"),
             ])
-            .execute().await {
-                Ok(_) => {
-                    println!("Post Request Sent Successfully!");
-                }
-                Err(e) => {
-                    println!("Request Error: {:?}", e);
-                }
+            .execute()
+            .await
+        {
+            Ok(_) => {
+                println!("Post Request Sent Successfully!");
+            }
+            Err(e) => {
+                println!("Request Error: {:?}", e);
+            }
         }
     });
 }

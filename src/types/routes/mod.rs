@@ -1,11 +1,11 @@
 use std::fmt;
 
+/// Traits
+pub mod tr;
 /// API Version V1
 pub mod v1;
 /// API Version V2
 pub mod v2;
-/// Traits
-pub mod tr;
 
 /// Api V2 routes available on the datadog api
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
