@@ -1,0 +1,14 @@
+[package]
+name = "ddog"
+version = "0.0.1"
+edition = "2021"
+authors = ["asnared"]
+readme = "README.md"
+repository = "https://github.com/abigger87/ddog/"
+license = "AGPL-3.0-only"
+description = """
+A Minimal Datadog SDK Built in Pure Rust.
+"""
+keywords = ["sdk", "datadog", "api", "rust", "logging"]
+
+[dependencies]
