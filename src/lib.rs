@@ -14,7 +14,7 @@ pub mod types;
 /// Re-export prelude modules
 pub mod prelude {
     pub use super::{
-        builder::*,
-        types::*
+        builder::{self, *},
+        types::{self, prelude::*},
     };
 }

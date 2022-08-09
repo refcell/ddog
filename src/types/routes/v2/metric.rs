@@ -1,9 +1,9 @@
-use async_trait::async_trait;
-use serde::Deserialize;
-use chrono::{DateTime, Utc};
-use serde_with::TimestampMilliSeconds;
-use serde_with::formats::Flexible;
+use std::str::FromStr;
 
+use async_trait::async_trait;
+use serde::{Deserialize, Serialize};
+use chrono::{DateTime, Utc};
+use chrono::serde::ts_seconds_option;
 
 use crate::{prelude::routes::tr::Route, types};
 
@@ -18,43 +18,15 @@ pub struct Metric {
     pub body: reqwest::Body,
 }
 
-/*
-
-# Path parameters
-export metric_name="dist.http.endpoint.request"
-# Curl command
-curl -X POST "https://api.datadoghq.com/api/v2/metrics/${metric_name}/tags" \
--H "Accept: application/json" \
--H "Content-Type: application/json" \
--H "DD-API-KEY: ${DD_API_KEY}" \
--H "DD-APPLICATION-KEY: ${DD_APP_KEY}" \
--d @- << EOF
-{
-    "data": {
-        "type": "manage_tags",
-        "id": "ExampleCreateatagconfigurationreturnsCreatedresponse",
-        "attributes": {
-        "tags": [
-            "app",
-            "datacenter"
-        ],
-        "metric_type": "gauge"
-        }
-    }
-}
-EOF
-
- */
-
 /// A Metric Response
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct MetricResponse {
     /// Metric Response Data
     pub data: MetricResponseData,
 }
 
 /// The Metric Response Data
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct MetricResponseData {
     /// The metric type
     #[serde(rename="type")]
@@ -65,24 +37,21 @@ pub struct MetricResponseData {
     pub attributes: MetricResponseAttributes,
 }
 
+// #[serde_with::serde_as]
 /// The Metric Response Attributes
-#[serde_with::serde_as]
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct MetricResponseAttributes {
     /// The time of creation
-    #[serde(rename="created_at")]
-    #[serde_as(as = "TimestampMilliSeconds<String, Flexible>")]
-    pub createdAt: DateTime<Utc>,
+    #[serde(with = "ts_seconds_option")]
+    pub created_at: Option<DateTime<Utc>>,
     /// The included percentiles
-    #[serde(rename="included_percentiles")]
-    pub includedPercentiles: bool,
+    pub included_percentiles: bool,
     /// The Metric's Type
-    #[serde(rename="metric_type")]
+    #[serde(rename="type")]
     pub type_: MetricType,
     /// The time it was previously modified
-    #[serde(rename="modified_at")]
-    #[serde_as(as = "TimestampMilliSeconds<String, Flexible>")]
-    pub modifiedAt: DateTime<Utc>,
+    #[serde(with = "ts_seconds_option")]
+    pub modified_at: Option<DateTime<Utc>>,
     /// Tags
     pub tags: Vec<String>,
     /// Aggregations
@@ -90,7 +59,7 @@ pub struct MetricResponseAttributes {
 }
 
 /// A Metric Aggregation
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Aggregation {
     /// A space aggregation for use in query.
     pub space: SpaceEnum,
@@ -99,7 +68,7 @@ pub struct Aggregation {
 }
 
 /// A Space Enum
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum SpaceEnum {
     /// Average Metric
     #[serde(rename="avg")]
@@ -116,7 +85,7 @@ pub enum SpaceEnum {
 }
 
 /// A Time Enum
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum TimeEnum {
     /// Average Metric
     #[serde(rename="avg")]
@@ -136,7 +105,7 @@ pub enum TimeEnum {
 }
 
 /// The Metric Types
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum MetricType {
     /// A guage metric
     #[serde(rename="gauge")]
@@ -153,21 +122,27 @@ pub enum MetricType {
 }
 
 /// A Metric Tag
-#[derive(Debug, Deserialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum MetricTag {
     /// Manage Tags Response
     #[serde(rename="manage_tags")]
     ManageTags,
 }
 
-impl Metric {
-    /// Instantiates a new Metric
-    pub fn new(name: String) -> Self {
+impl Default for Metric {
+    fn default() -> Self {
         Self {
             route: None,
             headers: reqwest::header::HeaderMap::new(),
-            body: reqwest::Body::empty(),
+            body: reqwest::Body::from(""),
         }
+    }
+}
+
+impl Metric {
+    /// Instantiates a new Metric
+    pub fn new() -> Self {
+        Self::default()
     }
 
     /// Creates a target identifier for logging
@@ -178,62 +153,63 @@ impl Metric {
 
 #[async_trait]
 impl Route for Metric {
-    type ExecutionResult = ();
+    /// Result returned by datadog for the metric endpoint query
+    type ExecutionResult = MetricResponse;
 
     /// The route path
     fn path(&self) -> String {
-        format!("/v2/metrics/{}", self.name)
+        format!("/v2/metrics/{}", self.route.as_ref().unwrap_or(&"".to_string()))
     }
 
     /// Sub Routes
-    fn route(&mut self, route: String) -> Self {
+    fn route(mut self, route: String) -> Self {
         self.route = Some(route);
         self
     }
 
     /// Add a header to the request
-    fn with_header(&mut self, key: &str, value: &str) -> Self {
-        self.headers.insert(key.to_string(), value.to_string());
+    fn with_header(mut self, key: &str, value: &str) -> Self {
+        self.headers.insert(reqwest::header::HeaderName::from_str(&key).unwrap(), reqwest::header::HeaderValue::from_str(&value).unwrap());
         self
     }
 
     /// Add a list of headers to the request
-    fn headers(&mut self, headers: Vec<(String, String)>) -> Self {
+    fn headers(mut self, headers: Vec<(String, String)>) -> Self {
         for (key, value) in headers {
-            self.headers.insert(key, value);
+            self.headers.insert(reqwest::header::HeaderName::from_str(&key).unwrap(), reqwest::header::HeaderValue::from_str(&value).unwrap());
         }
         self
     }
 
     /// Adds an api key to the request
-    fn with_api_key(&mut self, key: String) -> Self {
-        self.headers.push(("DD-API-KEY".to_string(), key));
+    fn with_api_key(mut self, key: String) -> Self {
+        self.headers.insert(reqwest::header::HeaderName::from_str("DD-API-KEY").unwrap(), reqwest::header::HeaderValue::from_str(&key).unwrap());
         self
     }
 
     /// Adds an application key to the request
-    fn with_application_key(&mut self, key: String) -> Self {
-        self.headers.push(("DD-APPLICATION-KEY".to_string(), key));
+    fn with_application_key(mut self, key: String) -> Self {
+        self.headers.insert(reqwest::header::HeaderName::from_str("DD-APPLICATION-KEY").unwrap(), reqwest::header::HeaderValue::from_str(&key).unwrap());
         self
     }
 
     /// Adds a body to the request
-    fn body<T: Into<reqwest::Body>>(&mut self, body: T) -> Self {
+    fn body<T: Into<reqwest::Body>>(mut self, body: T) -> Self {
         self.body = body.into();
         self
     }
 
     /// Executes the api request
-    async fn execute(&self) -> Result<Self::ExecutionResult, reqwest::StatusCode> {
+    async fn execute(self) -> Result<Self::ExecutionResult, reqwest::StatusCode> {
         // Validate the route
-        let route = if let Some(r) = self.route { r } else {
+        if self.route.is_none() {
             return Err(reqwest::StatusCode::BAD_REQUEST);
         };
         let url = format!("{}/{}", types::base::BASE_API_URL, self.path());
         tracing::info!(target: "/v2/metrics", "Sending Request to {}", url);
 
         let mut req_builder: reqwest::RequestBuilder = reqwest::Client::new().post(url);
-        req_builder = req_builder.headers(self.headers);
+        req_builder = req_builder.headers(self.headers.clone());
         req_builder = req_builder.body(self.body);
 
         let response = req_builder.send().await;

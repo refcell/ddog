@@ -1,25 +1,54 @@
-use ddog::{builder, types::routes::V2Routes};
+use ddog::prelude::*;
 
-use tokio_test;
+
+/*
+
+# Path parameters
+export metric_name="dist.http.endpoint.request"
+# Curl command
+curl -X POST "https://api.datadoghq.com/api/v2/metrics/${metric_name}/tags" \
+-H "Accept: application/json" \
+-H "Content-Type: application/json" \
+-H "DD-API-KEY: ${DD_API_KEY}" \
+-H "DD-APPLICATION-KEY: ${DD_APP_KEY}" \
+-d @- << EOF
+{
+    "data": {
+        "type": "manage_tags",
+        "id": "ExampleCreateatagconfigurationreturnsCreatedresponse",
+        "attributes": {
+        "tags": [
+            "app",
+            "datacenter"
+        ],
+        "metric_type": "gauge"
+        }
+    }
+}
+EOF
+
+ */
+
 
 #[test]
 fn post_metrics_explicitly() {
-    let builder = builder::Builder::new();
+    let mut builder = builder::Builder::new();
     tokio_test::block_on(async {
-    match builder.v2()
-        .metrics()
-        .headers(vec![
-            ("Accept".to_string(), "application/json".to_string()),
-            ("Content-Type".to_string(), "application/json".to_string()),
-        ])
-        .post() {
-            Ok() => {
-                println!("Post Request Sent Successfully!");
-            }
-            Err(e) => {
-                println!("Request Error: {:?}", e);
-            }
-    }});
+        match builder.v2()
+            .metrics()
+            .headers(vec![
+                ("Accept".to_string(), "application/json".to_string()),
+                ("Content-Type".to_string(), "application/json".to_string()),
+            ])
+            .execute().await {
+                Ok(_) => {
+                    println!("Post Request Sent Successfully!");
+                }
+                Err(e) => {
+                    println!("Request Error: {:?}", e);
+                }
+        }
+    });
 }
 
 // #[test]
