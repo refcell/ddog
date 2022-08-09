@@ -35,6 +35,7 @@ fn post_metrics_explicitly() {
         match builder
             .v2()
             .metrics()
+            .route("my.metric.name".to_string())
             .headers(vec![
                 ("Accept", "application/json"),
                 ("Content-Type", "application/json"),
@@ -52,24 +53,29 @@ fn post_metrics_explicitly() {
     });
 }
 
-// #[test]
-// fn post_metrics_routes() {
-//     let builder = builder::Builder::new();
-//     match builder.v2()
-//         .route(V2Routes::Metrics)
-//         .with_header()
-//         .with_header()
-//         .with_api_key("api_key".to_string())
-//         .with_application_key("application_key".to_string())
-//         .post() {
-//             Ok() => {
-//                 println!("Post Request Sent Successfully!");
-//             }
-//             Err(e) => {
-//                 println!("Request Error: {:?}", e);
-//             }
-//         }
-// }
+#[test]
+fn post_metrics_routes() {
+    let mut builder = builder::Builder::new();
+    tokio_test::block_on(async {
+        match builder
+            .v2()
+            .route(V2Routes::Metrics)
+            .with_header("Accept", "application/json")
+            .with_header("Content-Type", "application/json")
+            .with_api_key("api_key")
+            .with_application_key("application_key")
+            .execute()
+            .await
+        {
+            Ok(_) => {
+                println!("Post Request Sent Successfully!");
+            }
+            Err(e) => {
+                println!("Request Error: {:?}", e);
+            }
+        }
+    });
+}
 
 // #[test]
 // fn post_metrics_default_route_config() {
