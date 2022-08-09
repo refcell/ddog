@@ -12,45 +12,70 @@
 //! }
 //! ```
 
-use crate::types::prelude::*;
+use crate::{types::prelude::*, prelude::routes::tr::Route};
 
-use reqwest::StatusCode;
-use serde::de::DeserializeOwned;
+/// Builder for creating datadog API requests
+///
+/// ## Usage
+///
+/// Below we showcase using the ddog::Builder to post metrics to the datadog API.
+///
+/// ```rust
+/// use ddog::prelude::Builder;
+///
+/// async {
+///     let builder = builder::Builder::new();
+///     match builder.v2()
+///        .metrics()
+///        .headers(vec![
+///            ("Accept".to_string(), "application/json".to_string()),
+///            ("Content-Type".to_string(), "application/json".to_string()),
+///        ])
+///        .post().await {
+///            Ok() => {
+///                println!("Post Request Sent Successfully!");
+///            }
+///            Err(e) => {
+///                println!("Request Error: {:?}", e);
+///            }
+///    }
+///    assert_eq!(cards.unwrap().get(0).unwrap().name.chars().collect::<Vec<char>>()[0], 'A');
+/// };
+/// ```
+#[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+pub struct Builder {
+    /// API Version
+    pub version: ApiVersion,
+    /// Request headers
+    pub headers: Vec<(String, String)>
+}
 
-/// The base datadog api url
-const BASE_API_URL: &str = "https://api.datadoghq.com/api/";
-
-
-// Build the URL for all calls
-async fn build<T>(url: String) -> Result<T, StatusCode>
-where
-    T: DeserializeOwned,
-{
-    let response = reqwest::get(url).await;
-
-    match &response {
-        Ok(r) => {
-            if r.status() != StatusCode::OK {
-                return Err(r.status());
-            }
-        }
-        Err(e) => {
-            if e.is_status() {
-                return Err(e.status().unwrap());
-            } else {
-                return Err(StatusCode::BAD_REQUEST);
-            }
+impl Builder {
+    /// Initializes the query builder
+    pub fn new() -> Self {
+        Self {
+            version: ApiVersion::Default(),
+            headers: Vec::new(),
         }
     }
 
-    // Parse the response body as Json
-    let content = response.unwrap().json::<T>().await;
+    /// Sets the api version to v1
+    pub fn v1(&mut self) -> &mut Self {
+        self.version = ApiVersion::V1;
+        self
+    }
 
-    match content {
-        Ok(s) => Ok(s),
-        Err(e) => {
-            println!("{:?}", e);
-            Err(StatusCode::BAD_REQUEST)
+    /// Sets the api version to v2
+    pub fn v2(&mut self) -> &mut Self {
+        self.version = ApiVersion::V2;
+        self
+    }
+
+    /// Post a metric
+    pub fn metrics(&self) -> impl Route {
+        match self.version {
+            ApiVersion::V1 => types::routes::v1::metric::Metric::new(),
+            ApiVersion::V2 => types::routes::v2::metric::Metric::new(),
         }
     }
 }

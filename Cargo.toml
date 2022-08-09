@@ -1,6 +1,6 @@
 [package]
 name = "ddog"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 authors = ["asnared"]
 readme = "README.md"
@@ -12,5 +12,11 @@ A Minimal Datadog SDK Built in Pure Rust.
 keywords = ["sdk", "datadog", "api", "rust", "logging"]
 
 [dependencies]
+chrono = "0.4.21"
+serde = { version = "1.0.143", features = [] }
+tracing = "0.1.36"
+async-trait = "0.1.57"
 reqwest = { version = "0.11.11", features = ["json"] }
-serde = "1.0.143"
+
+[dev-dependencies]
+tokio-test = "0.4.2"

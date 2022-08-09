@@ -9,6 +9,12 @@ pub enum ApiVersion {
     V2,
 }
 
+impl Default for ApiVersion {
+    fn default() -> Self {
+        Self::V2
+    }
+}
+
 impl fmt::Display for ApiVersion {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
