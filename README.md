@@ -1,6 +1,6 @@
 <img align="right" width="150" height="150" top="100" src="./assets/ddog.png">
 
-# ddog • [![ci](https://github.com/abigger87/ddog/actions/workflows/ci.yml/badge.svg)](https://github.com/abigger87/ddog/actions/workflows/ci.yml) ![license](https://img.shields.io/github/license/abigger87/ddog?label=license) [![crates.io](https://img.shields.io/crates/v/ddog.svg)](https://crates.io/crates/ddog)
+# ddog • [![ci](https://github.com/abigger87/ddog/actions/workflows/ci.yaml/badge.svg)](https://github.com/abigger87/ddog/actions/workflows/ci.yaml) ![license](https://img.shields.io/github/license/abigger87/ddog?label=license) [![crates.io](https://img.shields.io/crates/v/ddog.svg)](https://crates.io/crates/ddog)
 
 
 A **Minimal** Datadog SDK Built in _Pure_ Rust.
