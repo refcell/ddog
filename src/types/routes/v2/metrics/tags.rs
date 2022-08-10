@@ -309,7 +309,6 @@ impl Route<TagsResponse> for Tags {
         req_builder = req_builder.body(self.body);
 
         let response = req_builder.send().await;
-        tracing::info!(target: "/v2/metrics/{metric_name}/tags", "Received response from target: {:?}", response);
 
         match response {
             Ok(r) => {

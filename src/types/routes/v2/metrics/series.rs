@@ -164,7 +164,6 @@ impl Route<SeriesResponse> for Series {
         tracing::debug!(target: "/v2/series", "Request Builder: {:?}", req_builder);
 
         let response = req_builder.send().await;
-        tracing::info!(target: "/v2/series", "Received response from target: {:?}", response);
 
         match response {
             Ok(r) => {
