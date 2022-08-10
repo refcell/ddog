@@ -42,6 +42,16 @@ impl Builder {
         Self::default()
     }
 
+    /// Validate the json body
+    ///
+    /// Return some error if not valid.
+    pub fn is_body_valid_json(body: &str) -> Option<serde_json::Error> {
+        match serde_json::from_str::<serde_json::value::Value>(body) {
+            Ok(_) => None,
+            Err(e) => Some(e),
+        }
+    }
+
     /// Initialize a tracing subscriber
     pub fn with_subscriber(&mut self) -> &mut Self {
         let subscriber_builder = tracing_subscriber::fmt();
