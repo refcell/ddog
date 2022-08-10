@@ -1,7 +1,7 @@
-/// Metrics endpoint
-pub mod metric;
+/// Metrics endpoints
+pub mod metrics;
 
 /// Re-export common modules
 pub mod prelude {
-    pub use super::metric::*;
+    pub use super::metrics::*;
 }
