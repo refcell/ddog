@@ -161,7 +161,6 @@ impl Route<SeriesResponse> for Series {
         let mut req_builder: reqwest::RequestBuilder = reqwest::Client::new().post(url);
         req_builder = req_builder.headers(self.headers.clone());
         req_builder = req_builder.body(self.body);
-        tracing::debug!(target: "/v2/series", "Request Builder: {:?}", req_builder);
 
         let response = req_builder.send().await;
 

@@ -12,10 +12,12 @@ fn post_count_series_explicitly() {
 
     // Build and send the metrics post request
     let mut builder = builder::Builder::new();
+    let mut builder_ref = builder.v2();
+    if dotenv::var("TRACING_SUBSCRIBER").unwrap() == "true" {
+        builder_ref = builder_ref.with_subscriber();
+    }
     tokio_test::block_on(async {
-        let (status, res) = builder
-            .v2()
-            .with_subscriber()
+        let (status, res) = builder_ref
             .post_series()
             .headers(vec![
                 ("Accept", "application/json"),
@@ -68,10 +70,12 @@ fn post_series_invalid_json() {
 
     // Build and send the metrics post request
     let mut builder = builder::Builder::new();
+    let mut builder_ref = builder.v2();
+    if dotenv::var("TRACING_SUBSCRIBER").unwrap() == "true" {
+        builder_ref = builder_ref.with_subscriber();
+    }
     tokio_test::block_on(async {
-        let (status, res) = builder
-            .v2()
-            .with_subscriber()
+        let (status, res) = builder_ref
             .post_series()
             .headers(vec![
                 ("Accept", "application/json"),
@@ -109,10 +113,12 @@ fn post_series_invalid_json() {
 fn series_post_fails_invalid_api_key() {
     // Build and send the metrics post request
     let mut builder = builder::Builder::new();
+    let mut builder_ref = builder.v2();
+    if dotenv::var("TRACING_SUBSCRIBER").unwrap() == "true" {
+        builder_ref = builder_ref.with_subscriber();
+    }
     tokio_test::block_on(async {
-        let (status, res) = builder
-            .v2()
-            .with_subscriber()
+        let (status, res) = builder_ref
             .post_series()
             .headers(vec![
                 ("Accept", "application/json"),
