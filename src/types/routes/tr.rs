@@ -1,10 +1,15 @@
+use std::fmt::Debug;
+
 use async_trait::async_trait;
 
 /// The Route Trait
 #[async_trait]
-pub trait Route {
+pub trait Route<T>
+where
+    T: Debug,
+{
     /// Response for execute a route query
-    type ExecutionResult;
+    // type ExecutionResult: impl Debug;
 
     /// The route path
     fn path(&self) -> String;
@@ -12,10 +17,14 @@ pub trait Route {
     /// Specify Sub Routes
     ///
     /// For example, if the route is `/v2/metrics`, then the sub route is any string that is appended on like `metric_name` for `/v2/metrics/{metric_name}`.
+    #[deprecated(
+        since = "0.0.2",
+        note = "please use an explicit sub route method instead."
+    )]
     fn route(self, route: String) -> Self;
 
     /// Adds a body to the request
-    fn body<T: Into<reqwest::Body>>(self, body: T) -> Self;
+    fn body<B: Into<reqwest::Body>>(self, body: B) -> Self;
 
     /// Add a header to the request
     fn with_header(self, key: &str, value: &str) -> Self;
@@ -30,5 +39,5 @@ pub trait Route {
     fn with_application_key(self, key: &str) -> Self;
 
     /// Executes the api request
-    async fn execute(self) -> Result<Self::ExecutionResult, reqwest::StatusCode>;
+    async fn execute(self) -> (reqwest::StatusCode, Result<T, Option<reqwest::Error>>);
 }
