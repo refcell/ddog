@@ -2,6 +2,10 @@ name: ci
 
 on: [push]
 
+env:
+  DD_API_KEY: ${{ secrets.DD_API_KEY }}
+  DD_APPLICATION_KEY: ${{ secrets.DD_APPLICATION_KEY }}
+
 jobs:
   cargo-fmt:
     runs-on: ubuntu-latest
