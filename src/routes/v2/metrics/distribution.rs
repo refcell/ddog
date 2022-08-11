@@ -3,7 +3,10 @@ use std::str::FromStr;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 
-use crate::{prelude::routes::tr::Route, types};
+use crate::{
+    prelude::{routes::tr::Route, ApiVersion},
+    types,
+};
 
 /// Distribution Points Metrics Endpoint
 ///
@@ -45,6 +48,8 @@ use crate::{prelude::routes::tr::Route, types};
 /// ```
 #[derive(Debug)]
 pub struct Distribution {
+    /// Version
+    pub version: ApiVersion,
     /// Request Headers
     pub headers: reqwest::header::HeaderMap,
     /// Request Body
@@ -61,6 +66,7 @@ pub struct DistributionResponse {
 impl Default for Distribution {
     fn default() -> Self {
         Self {
+            version: ApiVersion::V1,
             headers: reqwest::header::HeaderMap::new(),
             body: reqwest::Body::from(""),
         }
@@ -77,6 +83,17 @@ impl Distribution {
     /// Creates a target identifier for logging
     pub fn target() -> String {
         String::from("v1/distribution_points")
+    }
+}
+
+impl TryFrom<ApiVersion> for Distribution {
+    type Error = &'static str;
+
+    fn try_from(v: ApiVersion) -> Result<Self, Self::Error> {
+        match v {
+            ApiVersion::V1 => Ok(Self::default()),
+            _ => Err("Unsupported API Version"),
+        }
     }
 }
 

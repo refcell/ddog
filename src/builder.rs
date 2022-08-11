@@ -75,14 +75,14 @@ impl Builder {
         self
     }
 
-    /// Creates the respective route for the given V2 Route types
-    // pub fn route<T>(&mut self, route: V2Routes) -> impl Route<T>
+    /// Creates the respective route for the given route enum
+    // pub fn route<T>(&mut self, route: Route) -> impl Route<T>
     // where
-    //     crate::types::routes::v2::metrics::tags::Tags: crate::types::routes::tr::Route<T>,
+    //     // crate::routes::v2::metrics::tags::Tags: crate::routes::tr::Route<T>,
     //     T: std::fmt::Debug,
     // {
     //     match self.version {
-    //         ApiVersion::V2 => match route {
+    //         ApiVersion::V2 => match version {
     //             // V2Routes::Metrics => self.metrics(),
     //             V2Routes::Metrics => panic!("Not implemented!"),
     //         },
@@ -93,11 +93,11 @@ impl Builder {
     /// Create a new Tag Configuration
     pub fn create_new_tag_config<T>(&self, metric_name: &str) -> impl Route<T>
     where
-        crate::types::routes::v2::metrics::tags::Tags: crate::types::routes::tr::Route<T>,
+        crate::routes::v2::metrics::tags::Tags: crate::routes::tr::Route<T>,
         T: std::fmt::Debug,
     {
         match self.version {
-            ApiVersion::V2 => crate::builder::v2::metrics::tags::Tags::new(metric_name),
+            ApiVersion::V2 => crate::routes::v2::metrics::tags::Tags::new(metric_name),
             _ => panic!("Unimplemented API Version"),
         }
     }
@@ -105,11 +105,11 @@ impl Builder {
     /// Posts series data to the metrics endpoint
     pub fn post_series<T>(&self) -> impl Route<T>
     where
-        crate::types::routes::v2::metrics::series::Series: crate::types::routes::tr::Route<T>,
+        crate::routes::v2::metrics::series::Series: crate::routes::tr::Route<T>,
         T: std::fmt::Debug,
     {
         match self.version {
-            ApiVersion::V2 => crate::builder::v2::metrics::series::Series::new(),
+            ApiVersion::V2 => crate::routes::v2::metrics::series::Series::new(),
             _ => panic!("Unimplemented API Version"),
         }
     }
@@ -117,13 +117,15 @@ impl Builder {
     /// Posts distribution points to the metrics endpoint
     pub fn post_distribution<T>(&self) -> impl Route<T>
     where
-        crate::types::routes::v2::metrics::distribution::Distribution:
-            crate::types::routes::tr::Route<T>,
+        crate::routes::v2::metrics::distribution::Distribution: crate::routes::tr::Route<T>,
         T: std::fmt::Debug,
     {
-        match self.version {
-            ApiVersion::V2 => crate::builder::v2::metrics::distribution::Distribution::new(),
-            _ => panic!("Unimplemented API Version"),
+        match crate::routes::v2::metrics::distribution::Distribution::try_from(self.version) {
+            Ok(distribution) => distribution,
+            Err(e) => {
+                tracing::error!(target: "builder", "Failed to create distribution for api version: {:?} with error: {:?}", self.version, e);
+                panic!("Unimplemented API Version: {:?}", e)
+            }
         }
     }
 }
