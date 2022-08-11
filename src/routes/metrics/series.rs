@@ -3,7 +3,7 @@ use std::str::FromStr;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 
-use crate::{prelude::routes::tr::Route, types};
+use crate::types;
 
 /// Series Metrics Endpoint
 ///
@@ -56,6 +56,8 @@ use crate::{prelude::routes::tr::Route, types};
 /// ```
 #[derive(Debug)]
 pub struct Series {
+    /// Version
+    pub version: types::version::ApiVersion,
     /// Request Headers
     pub headers: reqwest::header::HeaderMap,
     /// Request Body
@@ -72,8 +74,20 @@ pub struct SeriesResponse {
 impl Default for Series {
     fn default() -> Self {
         Self {
+            version: types::version::ApiVersion::V2,
             headers: reqwest::header::HeaderMap::new(),
             body: reqwest::Body::from(""),
+        }
+    }
+}
+
+impl TryFrom<types::version::ApiVersion> for Series {
+    type Error = &'static str;
+
+    fn try_from(v: types::version::ApiVersion) -> Result<Self, Self::Error> {
+        match v {
+            types::version::ApiVersion::V2 => Ok(Self::default()),
+            _ => Err("Unsupported API Version"),
         }
     }
 }
@@ -92,7 +106,7 @@ impl Series {
 }
 
 #[async_trait]
-impl Route<SeriesResponse> for Series {
+impl types::route::Route<SeriesResponse> for Series {
     /// The route path
     fn path(&self) -> String {
         String::from("v2/series")
