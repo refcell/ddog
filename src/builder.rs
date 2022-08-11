@@ -128,4 +128,27 @@ impl Builder {
             }
         }
     }
+
+    /// Gets a list of active metrics
+    pub fn get_metrics<T>(
+        &self,
+        from: usize,
+        host: Option<String>,
+        tag_filter: Option<String>,
+    ) -> impl types::route::Route<T>
+    where
+        routes::metrics::get_metrics::GetMetrics: types::route::Route<T>,
+        T: std::fmt::Debug,
+    {
+        match routes::metrics::get_metrics::GetMetrics::try_from(self.version) {
+            Ok(metrics) => metrics
+                .set_from(from)
+                .set_host(host.unwrap_or_else(|| "".to_string()))
+                .set_tag_filter(tag_filter.unwrap_or_else(|| "".to_string())),
+            Err(e) => {
+                tracing::error!(target: "builder", "Failed to create metrics for api version: {:?} with error: {:?}", self.version, e);
+                panic!("Unimplemented API Version: {:?}", e)
+            }
+        }
+    }
 }

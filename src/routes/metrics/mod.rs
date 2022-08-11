@@ -22,13 +22,18 @@ pub mod tags;
 pub mod series;
 
 /// Metric to post distribution points
-/// `v2/distribution_points` Endpoint [POST]
+/// `v1/distribution_points` Endpoint [POST]
 pub mod distribution;
+
+/// Metric to get an active metrics list
+/// `v1/metrics` Endpoint [GET]
+pub mod get_metrics;
 
 /// Re-exported prelude of all metrics-related endpoints
 pub mod prelude {
     pub use super::{
         distribution::{self, *},
+        get_metrics::{self, *},
         series::{self, *},
         tags::{self, *},
     };
