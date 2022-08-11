@@ -15,7 +15,7 @@ fn create_new_tag_explicitly() {
     // Build and send the metrics post request
     let mut builder = builder::Builder::new();
     let mut builder_ref = builder.v2();
-    if dotenv::var("TRACING_SUBSCRIBER").unwrap() == "true" {
+    if let Ok(true) = dotenv::var("TRACING_SUBSCRIBER").map(|s| s == "true") {
         builder_ref = builder_ref.with_subscriber();
     }
     tokio_test::block_on(async {
@@ -54,7 +54,7 @@ fn create_new_tag_forbidden_key() {
     // Build and send the metrics post request
     let mut builder = builder::Builder::new();
     let mut builder_ref = builder.v2();
-    if dotenv::var("TRACING_SUBSCRIBER").unwrap() == "true" {
+    if let Ok(true) = dotenv::var("TRACING_SUBSCRIBER").map(|s| s == "true") {
         builder_ref = builder_ref.with_subscriber();
     }
     tokio_test::block_on(async {
