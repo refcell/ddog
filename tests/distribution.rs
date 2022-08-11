@@ -11,7 +11,7 @@ fn post_distribution_points() {
 
     // Build and send the metrics post request
     let mut builder = builder::Builder::new();
-    let mut builder_ref = builder.v2();
+    let mut builder_ref = builder.v1();
     if dotenv::var("TRACING_SUBSCRIBER")
         .map(|s| s == "true")
         .unwrap_or(false)
@@ -59,7 +59,7 @@ fn post_distribution_invalid_json() {
 
     // Build and send the metrics post request
     let mut builder = builder::Builder::new();
-    let mut builder_ref = builder.v2();
+    let mut builder_ref = builder.v1();
     if dotenv::var("TRACING_SUBSCRIBER")
         .map(|s| s == "true")
         .unwrap_or(false)
@@ -98,7 +98,7 @@ fn post_distribution_invalid_json() {
 fn distribution_post_fails_invalid_api_key() {
     // Build and send the metrics post request
     let mut builder = builder::Builder::new();
-    let mut builder_ref = builder.v2();
+    let mut builder_ref = builder.v1();
     if dotenv::var("TRACING_SUBSCRIBER")
         .map(|s| s == "true")
         .unwrap_or(false)
