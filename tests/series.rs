@@ -13,7 +13,10 @@ fn post_count_series_explicitly() {
     // Build and send the metrics post request
     let mut builder = builder::Builder::new();
     let mut builder_ref = builder.v2();
-    if let Ok(true) = dotenv::var("TRACING_SUBSCRIBER").map(|s| s == "true") {
+    if dotenv::var("TRACING_SUBSCRIBER")
+        .map(|s| s == "true")
+        .unwrap_or(false)
+    {
         builder_ref = builder_ref.with_subscriber();
     }
     tokio_test::block_on(async {
@@ -71,7 +74,10 @@ fn post_series_invalid_json() {
     // Build and send the metrics post request
     let mut builder = builder::Builder::new();
     let mut builder_ref = builder.v2();
-    if let Ok(true) = dotenv::var("TRACING_SUBSCRIBER").map(|s| s == "true") {
+    if dotenv::var("TRACING_SUBSCRIBER")
+        .map(|s| s == "true")
+        .unwrap_or(false)
+    {
         builder_ref = builder_ref.with_subscriber();
     }
     tokio_test::block_on(async {
@@ -114,7 +120,10 @@ fn series_post_fails_invalid_api_key() {
     // Build and send the metrics post request
     let mut builder = builder::Builder::new();
     let mut builder_ref = builder.v2();
-    if let Ok(true) = dotenv::var("TRACING_SUBSCRIBER").map(|s| s == "true") {
+    if dotenv::var("TRACING_SUBSCRIBER")
+        .map(|s| s == "true")
+        .unwrap_or(false)
+    {
         builder_ref = builder_ref.with_subscriber();
     }
     tokio_test::block_on(async {
