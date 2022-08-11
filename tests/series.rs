@@ -1,4 +1,4 @@
-use ddog::prelude::{v2::prelude::series::SeriesResponse, *};
+use ddog::prelude::*;
 
 extern crate dotenv;
 use dotenv::dotenv;
@@ -61,7 +61,7 @@ fn post_count_series_explicitly() {
 
         tracing::info!(target: "v2/series", "Response: {:?}", res);
         assert_eq!(status, 202);
-        assert_eq!(res.unwrap(), SeriesResponse { errors: vec![] });
+        assert_eq!(res.unwrap(), series::SeriesResponse { errors: vec![] });
     });
 }
 

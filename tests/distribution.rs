@@ -1,4 +1,4 @@
-use ddog::prelude::{v2::prelude::distribution::DistributionResponse, *};
+use ddog::prelude::*;
 
 extern crate dotenv;
 use dotenv::dotenv;
@@ -44,7 +44,7 @@ fn post_distribution_points() {
         assert_eq!(status, 202);
         assert_eq!(
             res.unwrap(),
-            DistributionResponse {
+            distribution::DistributionResponse {
                 status: String::from("ok")
             }
         );

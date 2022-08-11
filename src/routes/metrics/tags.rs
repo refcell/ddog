@@ -5,7 +5,7 @@ use chrono::serde::ts_seconds_option;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use crate::{prelude::routes::tr::Route, types};
+use crate::types;
 
 /// Tags Metrics Endpoint
 ///
@@ -72,6 +72,8 @@ use crate::{prelude::routes::tr::Route, types};
 pub struct Tags {
     /// The metric name
     pub name: Option<String>,
+    /// The api version
+    pub version: types::version::ApiVersion,
     /// Request Headers
     pub headers: reqwest::header::HeaderMap,
     /// Request Body
@@ -192,8 +194,20 @@ impl Default for Tags {
     fn default() -> Self {
         Self {
             name: None,
+            version: types::version::ApiVersion::V2,
             headers: reqwest::header::HeaderMap::new(),
             body: reqwest::Body::from(""),
+        }
+    }
+}
+
+impl TryFrom<types::version::ApiVersion> for Tags {
+    type Error = &'static str;
+
+    fn try_from(v: types::version::ApiVersion) -> Result<Self, Self::Error> {
+        match v {
+            types::version::ApiVersion::V2 => Ok(Self::default()),
+            _ => Err("Unsupported API Version"),
         }
     }
 }
@@ -204,6 +218,7 @@ impl Tags {
         tracing::info!(target: "/v2/metrics/{metric_name}/tags", "Tags Route Created");
         Self {
             name: Some(metric_name.to_string()),
+            version: types::version::ApiVersion::V2,
             headers: reqwest::header::HeaderMap::new(),
             body: reqwest::Body::from(""),
         }
@@ -223,7 +238,7 @@ impl Tags {
 }
 
 #[async_trait]
-impl Route<TagsResponse> for Tags {
+impl types::route::Route<TagsResponse> for Tags {
     /// The route path
     fn path(&self) -> String {
         format!(
