@@ -4,6 +4,9 @@
 #![forbid(unsafe_code)]
 #![forbid(where_clauses_object_safety)]
 
+/// An API Client
+pub mod client;
+
 /// The Query Builder
 pub mod builder;
 
@@ -16,6 +19,7 @@ pub mod types;
 /// Re-export prelude modules
 pub mod prelude {
     pub use super::{
+        client::{self, *},
         builder::{self, *},
         routes::{self, prelude::*},
         types::{self, prelude::*},
