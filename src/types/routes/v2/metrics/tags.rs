@@ -7,9 +7,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::{prelude::routes::tr::Route, types};
 
-/// Tags Metric Endpoint
+/// Tags Metrics Endpoint
 ///
-/// ## Overvioew
+/// ## Overview
 ///
 /// The tags route on the metrics endpoint allows you to create a tag configuration for a given metric.
 ///
@@ -309,7 +309,6 @@ impl Route<TagsResponse> for Tags {
         req_builder = req_builder.body(self.body);
 
         let response = req_builder.send().await;
-        tracing::info!(target: "/v2/metrics/{metric_name}/tags", "Received response from target: {:?}", response);
 
         match response {
             Ok(r) => {

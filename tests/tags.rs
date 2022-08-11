@@ -14,10 +14,15 @@ fn create_new_tag_explicitly() {
 
     // Build and send the metrics post request
     let mut builder = builder::Builder::new();
+    let mut builder_ref = builder.v2();
+    if dotenv::var("TRACING_SUBSCRIBER")
+        .map(|s| s == "true")
+        .unwrap_or(false)
+    {
+        builder_ref = builder_ref.with_subscriber();
+    }
     tokio_test::block_on(async {
-        let (status, res) = builder
-            .v2()
-            .with_subscriber()
+        let (status, res) = builder_ref
             .create_new_tag_config("rpc_latency")
             .headers(vec![
                 ("Accept", "application/json"),
@@ -51,10 +56,15 @@ fn create_new_tag_explicitly() {
 fn create_new_tag_forbidden_key() {
     // Build and send the metrics post request
     let mut builder = builder::Builder::new();
+    let mut builder_ref = builder.v2();
+    if dotenv::var("TRACING_SUBSCRIBER")
+        .map(|s| s == "true")
+        .unwrap_or(false)
+    {
+        builder_ref = builder_ref.with_subscriber();
+    }
     tokio_test::block_on(async {
-        let (status, res) = builder
-            .v2()
-            .with_subscriber()
+        let (status, res) = builder_ref
             .create_new_tag_config("rpc_latency")
             .headers(vec![
                 ("Accept", "application/json"),

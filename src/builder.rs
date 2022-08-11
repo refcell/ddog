@@ -113,4 +113,17 @@ impl Builder {
             _ => panic!("Unimplemented API Version"),
         }
     }
+
+    /// Posts distribution points to the metrics endpoint
+    pub fn post_distribution<T>(&self) -> impl Route<T>
+    where
+        crate::types::routes::v2::metrics::distribution::Distribution:
+            crate::types::routes::tr::Route<T>,
+        T: std::fmt::Debug,
+    {
+        match self.version {
+            ApiVersion::V2 => crate::builder::v2::metrics::distribution::Distribution::new(),
+            _ => panic!("Unimplemented API Version"),
+        }
+    }
 }
