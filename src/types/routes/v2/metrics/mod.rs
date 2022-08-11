@@ -19,9 +19,13 @@ pub mod tags;
 /// `v2/series` Endpoint [POST]
 pub mod series;
 
+/// `v2/distribution_points` Endpoint [POST]
+pub mod distribution;
+
 /// Re-exported prelude of all metrics-related endpoints
 pub mod prelude {
     pub use super::{
+        distribution::{self, *},
         series::{self, *},
         tags::{self, *},
     };

@@ -7,9 +7,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::{prelude::routes::tr::Route, types};
 
-/// Tags Metric Endpoint
+/// Tags Metrics Endpoint
 ///
-/// ## Overvioew
+/// ## Overview
 ///
 /// The tags route on the metrics endpoint allows you to create a tag configuration for a given metric.
 ///
