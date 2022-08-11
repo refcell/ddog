@@ -3,6 +3,9 @@
 /// The Base Datadog API URL
 pub mod base;
 
+/// Environment Variable Config
+pub mod env;
+
 /// API Version Types
 pub mod version;
 
