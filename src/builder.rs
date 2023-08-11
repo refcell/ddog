@@ -1,4 +1,4 @@
-//! Internal query builder
+//! Exposed Query Builder
 
 use crate::{routes, types};
 
